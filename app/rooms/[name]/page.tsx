@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   LiveKitRoom,
@@ -12,7 +12,7 @@ interface RoomPageProps {
   params: Promise<{ name: string }>;
 }
 
-export default function RoomPage({ params }: RoomPageProps) {
+function RoomClient({ params }: RoomPageProps) {
   const [roomName, setRoomName] = useState<string>('');
   const searchParams = useSearchParams();
   const participantName = searchParams?.get('name') || 'Guest';
@@ -69,5 +69,23 @@ export default function RoomPage({ params }: RoomPageProps) {
     >
       <VideoConference chatMessageFormatter={formatChatMessageLinks} />
     </LiveKitRoom>
+  );
+}
+
+export default function RoomPage({ params }: RoomPageProps) {
+  return (
+    <Suspense fallback={
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        color: 'white'
+      }}>
+        Loading...
+      </div>
+    }>
+      <RoomClient params={params} />
+    </Suspense>
   );
 }
