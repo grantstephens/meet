@@ -1,5 +1,5 @@
 # dependencies
-/node_modules
+node_modules
 /.pnp
 .pnp.js
 
@@ -32,3 +32,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# git
+.git
+.gitignore
+
+# docker
+Dockerfile
+.dockerignore
+
+# IDE
+.vscode
+.idea
+
+# claude
+.claude
