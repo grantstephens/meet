@@ -101,6 +101,39 @@ Or use a `.env` file:
 docker run -p 3000:3000 --env-file .env meet
 ```
 
+### Running with Docker Compose (Recommended)
+
+The easiest way to run the application with Docker:
+
+1. **Create your environment file:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Edit `.env` with your LiveKit credentials:**
+   ```bash
+   LIVEKIT_API_KEY=your_api_key
+   LIVEKIT_API_SECRET=your_api_secret
+   LIVEKIT_URL=wss://your-project.livekit.cloud
+   ```
+
+3. **Start the application:**
+   ```bash
+   docker-compose up -d
+   ```
+
+4. **View logs:**
+   ```bash
+   docker-compose logs -f
+   ```
+
+5. **Stop the application:**
+   ```bash
+   docker-compose down
+   ```
+
+The application will be available at http://localhost:3000
+
 ### Automated Docker Builds
 
 This repository includes a GitHub Actions workflow that automatically builds and pushes a Docker image to GitHub Container Registry when code is pushed to the `main` branch.
