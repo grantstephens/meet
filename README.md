@@ -103,7 +103,7 @@ docker run -p 3000:3000 --env-file .env meet
 
 ### Running with Docker Compose (Recommended)
 
-The easiest way to run the application with Docker:
+The easiest way to run the application with Docker. Uses the pre-built image from GitHub Container Registry.
 
 1. **Create your environment file:**
    ```bash
@@ -134,19 +134,29 @@ The easiest way to run the application with Docker:
 
 The application will be available at http://localhost:3000
 
+#### Local Development Build
+
+To build from source instead of using the pre-built image:
+
+```bash
+docker-compose -f docker-compose.local.yml up -d
+```
+
 ### Automated Docker Builds
 
 This repository includes a GitHub Actions workflow that automatically builds and pushes a Docker image to GitHub Container Registry when code is pushed to the `main` branch.
 
-The image will be available at:
+The image is available at:
 ```
-ghcr.io/<your-username>/meet:latest
+ghcr.io/grantstephens/meet:latest
 ```
 
-To pull and run the latest image:
+**Note:** The default `docker-compose.yml` automatically uses this pre-built image, so you always get the latest stable version.
+
+To manually pull and run the latest image:
 ```bash
-docker pull ghcr.io/<your-username>/meet:latest
-docker run -p 3000:3000 --env-file .env ghcr.io/<your-username>/meet:latest
+docker pull ghcr.io/grantstephens/meet:latest
+docker run -p 3000:3000 --env-file .env ghcr.io/grantstephens/meet:latest
 ```
 
 ## Deployment
