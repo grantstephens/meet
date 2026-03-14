@@ -6,15 +6,15 @@ import { useRouter, useSearchParams } from 'next/navigation';
 function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const roomParam = searchParams?.get('room');
   const [roomName, setRoomName] = useState('');
   const [participantName, setParticipantName] = useState('');
 
   useEffect(() => {
-    const roomParam = searchParams?.get('room');
     if (roomParam) {
       setRoomName(roomParam);
     }
-  }, [searchParams]);
+  }, [roomParam]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,45 +72,63 @@ function HomeContent() {
               />
             </div>
 
-            <div>
-              <label htmlFor="roomName" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
-                Room Name
-              </label>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <input
-                  type="text"
-                  id="roomName"
-                  value={roomName}
-                  onChange={(e) => setRoomName(e.target.value)}
-                  style={{
-                    flex: 1,
-                    padding: '0.75rem',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    color: 'white',
-                    fontSize: '1rem'
-                  }}
-                  placeholder="Enter room name"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={handleCreateRoom}
-                  style={{
-                    padding: '0.75rem 1rem',
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    borderRadius: '8px',
-                    color: 'white',
-                    cursor: 'pointer',
-                    fontSize: '0.9rem'
-                  }}
-                >
-                  Generate
-                </button>
+            {roomParam ? (
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                  Joining Room
+                </label>
+                <div style={{
+                  padding: '0.75rem',
+                  background: 'rgba(59, 130, 246, 0.2)',
+                  border: '1px solid rgba(59, 130, 246, 0.4)',
+                  borderRadius: '8px',
+                  color: 'white',
+                  fontSize: '1rem'
+                }}>
+                  {roomParam}
+                </div>
               </div>
-            </div>
+            ) : (
+              <div>
+                <label htmlFor="roomName" style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                  Room Name
+                </label>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input
+                    type="text"
+                    id="roomName"
+                    value={roomName}
+                    onChange={(e) => setRoomName(e.target.value)}
+                    style={{
+                      flex: 1,
+                      padding: '0.75rem',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      fontSize: '1rem'
+                    }}
+                    placeholder="Enter room name"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={handleCreateRoom}
+                    style={{
+                      padding: '0.75rem 1rem',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderRadius: '8px',
+                      color: 'white',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    Generate
+                  </button>
+                </div>
+              </div>
+            )}
 
             <button
               type="submit"
@@ -132,7 +150,7 @@ function HomeContent() {
           </form>
 
           <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.85rem', color: '#999' }}>
-            <p>Anyone with the room URL can join</p>
+            <p>{roomParam ? 'Enter your name to join this room' : 'Anyone with the room URL can join'}</p>
           </div>
         </div>
       </div>
