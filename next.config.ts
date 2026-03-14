@@ -11,23 +11,24 @@ const nextConfig: NextConfig = {
     });
     return config;
   },
-  headers: async () => {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Cross-Origin-Opener-Policy',
-            value: 'same-origin',
-          },
-          {
-            key: 'Cross-Origin-Embedder-Policy',
-            value: 'credentialless',
-          },
-        ],
-      },
-    ];
-  },
+  // Commenting out restrictive headers that may block LiveKit WebRTC
+  // headers: async () => {
+  //   return [
+  //     {
+  //       source: '/(.*)',
+  //       headers: [
+  //         {
+  //           key: 'Cross-Origin-Opener-Policy',
+  //           value: 'same-origin',
+  //         },
+  //         {
+  //           key: 'Cross-Origin-Embedder-Policy',
+  //           value: 'credentialless',
+  //         },
+  //       ],
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;
