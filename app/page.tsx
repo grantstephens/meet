@@ -19,7 +19,10 @@ function HomeContent() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (roomName && participantName) {
-      router.push(`/rooms/${encodeURIComponent(roomName)}?name=${encodeURIComponent(participantName)}`);
+      // If no room parameter exists, user is creating a new room and becomes admin
+      const isCreatingRoom = !roomParam;
+      const adminParam = isCreatingRoom ? '&admin=true' : '';
+      router.push(`/rooms/${encodeURIComponent(roomName)}?name=${encodeURIComponent(participantName)}${adminParam}`);
     }
   };
 

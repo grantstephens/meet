@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   const roomName = request.nextUrl.searchParams.get('roomName');
   const participantName = request.nextUrl.searchParams.get('participantName');
+  const isAdmin = request.nextUrl.searchParams.get('admin') === 'true';
 
   if (!roomName) {
     return NextResponse.json(
@@ -31,6 +32,7 @@ export async function GET(request: NextRequest) {
 
   const token = new AccessToken(apiKey, apiSecret, {
     identity: participantName,
+    metadata: JSON.stringify({ isAdmin }),
   });
 
   token.addGrant({
@@ -38,6 +40,8 @@ export async function GET(request: NextRequest) {
     roomJoin: true,
     canPublish: true,
     canSubscribe: true,
+    canUpdateOwnMetadata: true,
+    ...(isAdmin && { roomAdmin: true }),
   });
 
   const jwt = await token.toJwt();

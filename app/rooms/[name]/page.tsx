@@ -6,10 +6,112 @@ import {
   LiveKitRoom,
   VideoConference,
   formatChatMessageLinks,
+  useRoomContext,
+  useParticipants,
 } from '@livekit/components-react';
+import { RoomEvent } from 'livekit-client';
 
 interface RoomPageProps {
   params: Promise<{ name: string }>;
+}
+
+function AdminControls({ isAdmin }: { isAdmin: boolean }) {
+  const room = useRoomContext();
+  const participants = useParticipants();
+  const [showParticipants, setShowParticipants] = useState(false);
+
+  if (!isAdmin) return null;
+
+  const remoteParticipants = participants.filter(p => p.identity !== room.localParticipant.identity);
+
+  const handleRemoveParticipant = async (identity: string) => {
+    try {
+      await room.removeParticipant(identity);
+      console.log('Removed participant:', identity);
+    } catch (error) {
+      console.error('Failed to remove participant:', error);
+    }
+  };
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: '1rem',
+      right: '1rem',
+      zIndex: 1000,
+    }}>
+      <button
+        onClick={() => setShowParticipants(!showParticipants)}
+        style={{
+          padding: '0.75rem 1rem',
+          background: 'rgba(59, 130, 246, 0.9)',
+          border: 'none',
+          borderRadius: '8px',
+          color: 'white',
+          fontWeight: '600',
+          cursor: 'pointer',
+          fontSize: '0.9rem',
+        }}
+      >
+        👑 Admin ({remoteParticipants.length} participants)
+      </button>
+
+      {showParticipants && (
+        <div style={{
+          marginTop: '0.5rem',
+          background: 'rgba(17, 24, 39, 0.95)',
+          borderRadius: '8px',
+          padding: '1rem',
+          minWidth: '250px',
+          maxHeight: '400px',
+          overflowY: 'auto',
+        }}>
+          <h3 style={{ margin: '0 0 1rem 0', fontSize: '0.9rem', color: 'white' }}>
+            Participants
+          </h3>
+          {remoteParticipants.length === 0 ? (
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#999' }}>
+              No other participants
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {remoteParticipants.map((participant) => (
+                <div
+                  key={participant.identity}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0.5rem',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '4px',
+                  }}
+                >
+                  <span style={{ fontSize: '0.85rem', color: 'white' }}>
+                    {participant.identity}
+                  </span>
+                  <button
+                    onClick={() => handleRemoveParticipant(participant.identity)}
+                    style={{
+                      padding: '0.25rem 0.5rem',
+                      background: 'rgba(239, 68, 68, 0.9)',
+                      border: 'none',
+                      borderRadius: '4px',
+                      color: 'white',
+                      fontSize: '0.75rem',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function RoomClient({ params }: RoomPageProps) {
@@ -17,6 +119,7 @@ function RoomClient({ params }: RoomPageProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const participantName = searchParams?.get('name');
+  const isAdmin = searchParams?.get('admin') === 'true';
   const [token, setToken] = useState<string>('');
   const [liveKitUrl, setLiveKitUrl] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -42,9 +145,10 @@ function RoomClient({ params }: RoomPageProps) {
 
     const fetchToken = async () => {
       try {
-        console.log('Fetching token for room:', roomName, 'participant:', participantName);
+        console.log('Fetching token for room:', roomName, 'participant:', participantName, 'admin:', isAdmin);
+        const adminParam = isAdmin ? '&admin=true' : '';
         const response = await fetch(
-          `/api/token?roomName=${encodeURIComponent(roomName)}&participantName=${encodeURIComponent(participantName)}`
+          `/api/token?roomName=${encodeURIComponent(roomName)}&participantName=${encodeURIComponent(participantName)}${adminParam}`
         );
 
         if (!response.ok) {
@@ -62,7 +166,7 @@ function RoomClient({ params }: RoomPageProps) {
     };
 
     fetchToken();
-  }, [roomName, participantName]);
+  }, [roomName, participantName, isAdmin]);
 
   if (error) {
     return (
@@ -108,6 +212,7 @@ function RoomClient({ params }: RoomPageProps) {
       style={{ height: '100vh' }}
     >
       <VideoConference chatMessageFormatter={formatChatMessageLinks} />
+      <AdminControls isAdmin={isAdmin} />
     </LiveKitRoom>
   );
 }
