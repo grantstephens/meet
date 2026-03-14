@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import {
   LiveKitRoom,
   VideoConference,
@@ -15,7 +15,8 @@ interface RoomPageProps {
 function RoomClient({ params }: RoomPageProps) {
   const [roomName, setRoomName] = useState<string>('');
   const searchParams = useSearchParams();
-  const participantName = searchParams?.get('name') || 'Guest';
+  const router = useRouter();
+  const participantName = searchParams?.get('name');
   const [token, setToken] = useState<string>('');
   const [liveKitUrl, setLiveKitUrl] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -24,14 +25,20 @@ function RoomClient({ params }: RoomPageProps) {
     params.then((resolvedParams) => {
       console.log('Room params resolved:', resolvedParams);
       setRoomName(resolvedParams.name);
+
+      // Check if participant name is provided after we have the room name
+      if (!participantName) {
+        console.log('No participant name provided, redirecting to home with room:', resolvedParams.name);
+        router.push(`/?room=${encodeURIComponent(resolvedParams.name)}`);
+      }
     }).catch((err) => {
       console.error('Error resolving params:', err);
       setError('Failed to load room parameters');
     });
-  }, [params]);
+  }, [params, participantName, router]);
 
   useEffect(() => {
-    if (!roomName) return;
+    if (!roomName || !participantName) return;
 
     const fetchToken = async () => {
       try {
