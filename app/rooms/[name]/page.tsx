@@ -9,13 +9,12 @@ import {
   useRoomContext,
   useParticipants,
 } from '@livekit/components-react';
-import { RoomEvent } from 'livekit-client';
 
 interface RoomPageProps {
   params: Promise<{ name: string }>;
 }
 
-function AdminControls({ isAdmin }: { isAdmin: boolean }) {
+function AdminControls({ isAdmin, roomName }: { isAdmin: boolean; roomName: string }) {
   const room = useRoomContext();
   const participants = useParticipants();
   const [showParticipants, setShowParticipants] = useState(false);
@@ -26,10 +25,25 @@ function AdminControls({ isAdmin }: { isAdmin: boolean }) {
 
   const handleRemoveParticipant = async (identity: string) => {
     try {
-      await room.removeParticipant(identity);
+      const response = await fetch('/api/remove-participant', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          roomName,
+          participantIdentity: identity,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to remove participant');
+      }
+
       console.log('Removed participant:', identity);
     } catch (error) {
       console.error('Failed to remove participant:', error);
+      alert('Failed to remove participant. Please try again.');
     }
   };
 
@@ -212,7 +226,7 @@ function RoomClient({ params }: RoomPageProps) {
       style={{ height: '100vh' }}
     >
       <VideoConference chatMessageFormatter={formatChatMessageLinks} />
-      <AdminControls isAdmin={isAdmin} />
+      <AdminControls isAdmin={isAdmin} roomName={roomName} />
     </LiveKitRoom>
   );
 }
