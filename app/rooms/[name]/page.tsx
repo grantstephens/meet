@@ -216,6 +216,11 @@ function RoomClient({ params }: RoomPageProps) {
 
   console.log('Rendering LiveKitRoom component');
 
+  const handleDisconnect = () => {
+    console.log('Disconnected from room, redirecting to home');
+    router.push('/');
+  };
+
   return (
     <LiveKitRoom
       token={token}
@@ -224,6 +229,7 @@ function RoomClient({ params }: RoomPageProps) {
       video={true}
       audio={true}
       style={{ height: '100vh' }}
+      onDisconnected={handleDisconnect}
     >
       <VideoConference chatMessageFormatter={formatChatMessageLinks} />
       <AdminControls isAdmin={isAdmin} roomName={roomName} />
