@@ -18,10 +18,15 @@ function RoomClient({ params }: RoomPageProps) {
   const participantName = searchParams?.get('name') || 'Guest';
   const [token, setToken] = useState<string>('');
   const [liveKitUrl, setLiveKitUrl] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     params.then((resolvedParams) => {
+      console.log('Room params resolved:', resolvedParams);
       setRoomName(resolvedParams.name);
+    }).catch((err) => {
+      console.error('Error resolving params:', err);
+      setError('Failed to load room parameters');
     });
   }, [params]);
 
@@ -30,19 +35,45 @@ function RoomClient({ params }: RoomPageProps) {
 
     const fetchToken = async () => {
       try {
+        console.log('Fetching token for room:', roomName, 'participant:', participantName);
         const response = await fetch(
           `/api/token?roomName=${encodeURIComponent(roomName)}&participantName=${encodeURIComponent(participantName)}`
         );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+        console.log('Token received, connecting to:', data.url);
         setToken(data.token);
         setLiveKitUrl(data.url);
       } catch (error) {
         console.error('Error fetching token:', error);
+        setError(`Failed to get access token: ${error}`);
       }
     };
 
     fetchToken();
   }, [roomName, participantName]);
+
+  if (error) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        color: 'white',
+        padding: '2rem',
+        textAlign: 'center'
+      }}>
+        <h2>Error</h2>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   if (!token || !liveKitUrl) {
     return (
@@ -53,10 +84,12 @@ function RoomClient({ params }: RoomPageProps) {
         height: '100vh',
         color: 'white'
       }}>
-        Loading...
+        Loading room...
       </div>
     );
   }
+
+  console.log('Rendering LiveKitRoom component');
 
   return (
     <LiveKitRoom
