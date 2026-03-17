@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git remote:*)",
+      "Bash(gh repo view:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nUse pre-built GHCR image in docker-compose\n\n- Update docker-compose.yml to use ghcr.io/grantstephens/meet:latest\n- Add pull_policy: always to ensure latest image is used\n- Create docker-compose.local.yml for local development builds\n- Update README to explain both deployment options\n- Production uses pre-built image, dev can build from source\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(docker build:*)",
+      "Bash(curl:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(wc:*)",
+      "WebSearch",
+      "WebFetch(domain:docs.livekit.io)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git checkout:*)",
+      "Bash(go mod download:*)",
+      "Bash(go list:*)",
+      "Bash(go get:*)",
+      "Bash(npm install)",
+      "Bash(chmod:*)",
+      "Bash(npm run build:*)",
+      "Bash(GOOS=wasip1 GOARCH=wasm go build:*)",
+      "Bash(go mod tidy:*)",
+      "Bash(go doc:*)"
+    ]
+  }
+}

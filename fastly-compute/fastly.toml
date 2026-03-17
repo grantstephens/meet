@@ -1,0 +1,19 @@
+manifest_version = 3
+name = "meet"
+description = "Video conferencing app with LiveKit"
+authors = ["<your-email@example.com>"]
+language = "go"
+
+[local_server]
+  [local_server.backends.livekit_backend]
+    url = "https://meet-l3w5fgcs.livekit.cloud"
+
+[setup.backends.livekit_backend]
+  address = "meet-l3w5fgcs.livekit.cloud"
+  port = 443
+
+[setup.config_stores.config]
+  [setup.config_stores.config.items]
+    LIVEKIT_API_KEY = ""
+    LIVEKIT_API_SECRET = ""
+    LIVEKIT_URL = ""
