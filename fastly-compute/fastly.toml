@@ -1,19 +1,26 @@
 manifest_version = 3
+service_id = "ijJ3G5bfMRMc52xC3MRmh7"
 name = "meet"
 description = "Video conferencing app with LiveKit"
-authors = ["<your-email@example.com>"]
+authors = ["grant@stephens.co.za"]
 language = "go"
+
+[scripts]
+  build = "GOOS=wasip1 GOARCH=wasm go build -o bin/main.wasm ."
 
 [local_server]
   [local_server.backends.livekit_backend]
-    url = "https://meet-l3w5fgcs.livekit.cloud"
+    url = "https://greens-video-6dgcogi1.livekit.cloud"
+
+  [local_server.config_stores]
+    [local_server.config_stores.config]
+      format = "inline-toml"
+      [local_server.config_stores.config.contents]
+        LIVEKIT_API_KEY = "APIQ5Cpu9NVRWyw"
+        LIVEKIT_API_SECRET = "Q7RAAMF63oxFD2rKUhckPhNyT8TTAftj1V8E0J18NeD"
+        LIVEKIT_URL = "wss://greens-video-6dgcogi1.livekit.cloud"
 
 [setup.backends.livekit_backend]
-  address = "meet-l3w5fgcs.livekit.cloud"
+  address = "greens-video-6dgcogi1.livekit.cloud"
   port = 443
 
-[setup.config_stores.config]
-  [setup.config_stores.config.items]
-    LIVEKIT_API_KEY = ""
-    LIVEKIT_API_SECRET = ""
-    LIVEKIT_URL = ""

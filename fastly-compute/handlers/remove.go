@@ -120,7 +120,14 @@ func HandleRemoveParticipant(ctx context.Context, w fsthttp.ResponseWriter, r *f
 	}
 
 	// Make request to LiveKit using Fastly backend
-	apiURL := fmt.Sprintf("%s/twirp/livekit.RoomService/RemoveParticipant", livekitURL)
+	// Convert wss:// to https:// for the HTTP API
+	httpURL := livekitURL
+	if len(httpURL) > 6 && httpURL[:6] == "wss://" {
+		httpURL = "https://" + httpURL[6:]
+	} else if len(httpURL) > 5 && httpURL[:5] == "ws://" {
+		httpURL = "http://" + httpURL[5:]
+	}
+	apiURL := fmt.Sprintf("%s/twirp/livekit.RoomService/RemoveParticipant", httpURL)
 	apiReq, err := fsthttp.NewRequest("POST", apiURL, bytes.NewReader(reqBody))
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")

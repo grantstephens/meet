@@ -21,7 +21,7 @@ export default function Home({ room }: HomeProps) {
       // If no room parameter exists, user is creating a new room and becomes admin
       const isCreatingRoom = !room;
       const adminParam = isCreatingRoom ? '&admin=true' : '';
-      route(`/rooms/${encodeURIComponent(roomName)}?name=${encodeURIComponent(participantName)}${adminParam}`);
+      route(`/rooms/${encodeURIComponent(roomName)}?participantName=${encodeURIComponent(participantName)}${adminParam}`);
     }
   };
 
