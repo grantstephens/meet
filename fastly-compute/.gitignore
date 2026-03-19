@@ -1,0 +1,4 @@
+bin/
+*.wasm
+handlers/static/*
+!handlers/static/.gitkeep
